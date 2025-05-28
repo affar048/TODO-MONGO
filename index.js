@@ -8,15 +8,13 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // MongoDB connection
-
-mongoose.connect("mongodb+srv://affaraffu:LkkSO09DVxd6XFeH@todotest.0kbztty.mongodb.net/todotest?retryWrites=true&w=majority&appName=todotest")
+mongoose.connect("your_mongodb_connection_string_here")
     .then(() => {
         console.log("✅ Connected to MongoDB Atlas");
     })
     .catch((err) => {
         console.error("❌ MongoDB connection error:", err);
     });
-
 
 // Schema and model
 const itemSchema = new mongoose.Schema({
@@ -31,7 +29,6 @@ app.get("/", async (req, res) => {
     try {
         const items = await Item.find({});
         res.render("list", { tasks: items });
-
     } catch (err) {
         console.error("Error fetching items:", err);
         res.status(500).send("Internal Server Error");
@@ -40,9 +37,11 @@ app.get("/", async (req, res) => {
 
 // POST: Add new item
 app.post("/", async (req, res) => {
-    const itemName = req.body.ele1;
-    if (itemName.trim() !== "") {
-        const newItem = new Item({ name: itemName });
+    const title = req.body.title?.trim();
+    const priority = req.body.priority;
+
+    if (title) {
+        const newItem = new Item({ title, priority });
         await newItem.save();
     }
     res.redirect("/");
@@ -63,9 +62,14 @@ app.post("/delete", async (req, res) => {
 // POST: Edit item
 app.post("/edit", async (req, res) => {
     const itemId = req.body.index;
-    const updatedText = req.body.newText;
+    const updatedTitle = req.body.newText?.trim();
+    const updatedPriority = req.body.newPriority;
+
     try {
-        await Item.findByIdAndUpdate(itemId, { name: updatedText });
+        await Item.findByIdAndUpdate(itemId, {
+            title: updatedTitle,
+            priority: updatedPriority
+        });
         res.redirect("/");
     } catch (err) {
         console.error("Error updating item:", err);
@@ -75,5 +79,5 @@ app.post("/edit", async (req, res) => {
 
 // Start server
 app.listen(8000, () => {
-    console.log("Server is running on http://localhost:8000");
+    console.log("🚀 Server is running on http://localhost:8000");
 });
