@@ -8,7 +8,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 
 // MongoDB connection
-mongoose.connect("your_mongodb_connection_string_here")
+mongoose.connect("mongodb+srv://affaraffu:LkkSO09DVxd6XFeH@todotest.0kbztty.mongodb.net/?retryWrites=true&w=majority&appName=todotest")
     .then(() => {
         console.log("✅ Connected to MongoDB Atlas");
     })
