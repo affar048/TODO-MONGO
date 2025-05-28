@@ -20,15 +20,18 @@ mongoose.connect("mongodb+srv://affaraffu:LkkSO09DVxd6XFeH@todotest.0kbztty.mong
 
 // Schema and model
 const itemSchema = new mongoose.Schema({
-    name: String
+    title: { type: String, required: true },
+    priority: { type: String, enum: ['urgent', 'high', 'low'], required: true }
 });
+
 const Item = mongoose.model("Item", itemSchema);
 
 // GET: Render todo list
 app.get("/", async (req, res) => {
     try {
         const items = await Item.find({});
-        res.render("list", { ejes: items });
+        res.render("list", { tasks: items });
+
     } catch (err) {
         console.error("Error fetching items:", err);
         res.status(500).send("Internal Server Error");
