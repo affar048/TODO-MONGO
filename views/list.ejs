@@ -7,13 +7,17 @@
         function toggleEdit(index) {
             const displayP = document.getElementById("task-text-" + index);
             const editForm = document.getElementById("edit-form-" + index);
-            if (displayP.style.display === "none") {
-                displayP.style.display = "block";
-                editForm.style.display = "none";
-            } else {
-                displayP.style.display = "none";
-                editForm.style.display = "block";
+            displayP.style.display = displayP.style.display === "none" ? "block" : "none";
+            editForm.style.display = editForm.style.display === "none" ? "block" : "none";
+        }
+
+        function validateForm() {
+            const title = document.forms["addForm"]["title"].value.trim();
+            if (title === "") {
+                alert("Task title cannot be empty.");
+                return false;
             }
+            return true;
         }
     </script>
 </head>
@@ -25,17 +29,22 @@
     </header>
 
     <main class="box">
-        <% for (let i = 0; i < ejes.length; i++) { %>
+        <% for (let i = 0; i < tasks.length; i++) { %>
             <div class="item">
-               
-                
                 <!-- Task Display -->
-                <p id="task-text-<%= i %>"><%= ejes[i].name %></p>
+                <p id="task-text-<%= i %>">
+                    <strong><%= tasks[i].title %></strong> - <em><%= tasks[i].priority %></em>
+                </p>
 
                 <!-- Edit Form -->
                 <form id="edit-form-<%= i %>" action="/edit" method="POST" style="display:none;" class="edit-form">
-                    <input type="hidden" name="index" value="<%= ejes[i]._id %>">
-                    <input type="text" name="newText" value="<%= ejes[i].name %>" required>
+                    <input type="hidden" name="index" value="<%= tasks[i]._id %>">
+                    <input type="text" name="newText" value="<%= tasks[i].title %>" required>
+                    <select name="newPriority" required>
+                        <option value="low" <%= tasks[i].priority === "low" ? "selected" : "" %>>Low</option>
+                        <option value="high" <%= tasks[i].priority === "high" ? "selected" : "" %>>High</option>
+                        <option value="urgent" <%= tasks[i].priority === "urgent" ? "selected" : "" %>>Urgent</option>
+                    </select>
                     <button type="submit" class="save-btn">💾</button>
                     <button type="button" onclick="toggleEdit(<%= i %>)" class="cancel-btn">✖️</button>
                 </form>
@@ -45,15 +54,21 @@
 
                 <!-- Delete Form -->
                 <form action="/delete" method="POST" class="delete-form">
-                    <input type="hidden" name="index" value="<%= ejes[i]._id %>">
+                    <input type="hidden" name="index" value="<%= tasks[i]._id %>">
                     <button type="submit" class="delete-btn">🗑️</button>
                 </form>
             </div>
         <% } %>
 
         <!-- Add New Task -->
-        <form action="/" method="POST">
-            <input type="text" name="ele1" placeholder="Enter the task" required>
+        <form name="addForm" action="/" method="POST" onsubmit="return validateForm()">
+            <input type="text" name="title" placeholder="Enter the task" required>
+            <select name="priority" required>
+                <option value="" disabled selected>Select priority</option>
+                <option value="low">Low</option>
+                <option value="high">High</option>
+                <option value="urgent">Urgent</option>
+            </select>
             <button type="submit">+</button>
         </form>
     </main>
