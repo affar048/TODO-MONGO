@@ -28,7 +28,7 @@
 
 ---
 ## Deployment
-Check out the live version here: [TO-DO List]()
+Check out the live version here: [TO-DO List](https://todo-mongo-olcg.onrender.com/)
 
 ## 🗂 Project Structure
 
